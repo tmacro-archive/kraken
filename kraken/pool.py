@@ -22,6 +22,7 @@ def done_barrier_broken():
 def execute(task_config,  num_procs=None):
     if num_procs is None:
         num_procs = mp.cpu_count()
+        print('No worker count provided defaulting to number of CPUs: %d'%mp.cpu_count())
     start = mp.Barrier(num_procs, action=start_barrier_broken(task_config.duration))
     done = mp.Barrier(num_procs + 1, action=done_barrier_broken) # Add one for controlling proc
     procs = [mp.Process(target=do_work, args=(start, done, task_config)) for x in range(num_procs)]
