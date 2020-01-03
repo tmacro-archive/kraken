@@ -25,5 +25,7 @@ class BlobDriver(Driver):
         blob_client.upload_blob(data)
         return True
     
-    def _get(self):
-        pass
+    def _get(self, container, key, output):
+        blob_client = self._client.get_blob_client(container, blob=key)
+        x = blob_client.download_blob().readall()
+        return True
