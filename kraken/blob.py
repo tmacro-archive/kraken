@@ -3,7 +3,7 @@ import uuid
 from collections import namedtuple
 
 from azure.storage.blob import BlobClient, BlobServiceClient, ContainerClient
-
+from azure.core.exceptions import ResourceExistsError
 from .driver import Driver
 
 # with open(download_file_path, "wb") as download_file:
@@ -13,16 +13,17 @@ from .driver import Driver
 BlobDriverConfig = namedtuple('BlobDriverConfig', ['connection_str'])
 
 class BlobDriver(Driver):
-    def setup(self, driver_conf):
+    def _setup(self, driver_conf):
         self._client = BlobServiceClient.from_connection_string(driver_conf.connection_str)
-        self._container_name = 'blobdriver-%s'%uuid.uuid4().hex
-        self._container = self._client.create_container(self._container_name)
+        try:
+            self._client.create_container(self._bucket)
+        except ResourceExistsError:
+            pass
 
-    def put(self, num_bytes):
-        blob_name = 'blob-%s'%uuid.uuid4().hex
-        blob_client = self._client.get_blob_client(self._container_name, blob=blob_name)
-        with self._get_bytestream(num_bytes) as to_upload:
-            blob_client.upload_blob(to_upload)
+    def _put(self, container, key, data):
+        blob_client = self._client.get_blob_client(container, blob=key)
+        blob_client.upload_blob(data)
+        return True
     
-    def get(self):
+    def _get(self):
         pass
