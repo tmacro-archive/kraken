@@ -31,13 +31,16 @@ def start_barrier_broken(duration):
 def done_barrier_broken():
     print('Done barrier has been broken, test has finished.')
 
-def result_writer(results, exit, done, output_path):
+def result_writer(results, exit, done, output_path, verbose):
     with open(output_path, 'w') as output:
         output.write('[\n')
         while not exit.is_set() or not results.empty():
             try:
                 result = results.get(timeout=5)
-                print(result)
+                if verbose:
+                    print('%s %s/%s\t\t%s'%(result.type.upper(), result.bucket, result.key, 'SUCCESS' if result.result else 'FAILED'))
+                    if result.error:
+                        print(result.error)
                 output.write('%s,\n'%json.dumps(result._asdict()))
             except queue.Empty:
                 pass
@@ -46,7 +49,7 @@ def result_writer(results, exit, done, output_path):
         output.write('\n]')
     done.set()
     
-def execute(workload_config,  num_procs=None):
+def execute(workload_config,  num_procs=None, verbose=False):
     if num_procs is None:
         num_procs = mp.cpu_count()
         print('No worker count provided defaulting to number of CPUs: %d'%mp.cpu_count())
@@ -63,7 +66,7 @@ def execute(workload_config,  num_procs=None):
     # Setup the results writer
     writer_exit = mp.Event()
     writer_done = mp.Event()
-    writer_proc = mp.Process(target=result_writer, args=(results, writer_exit, writer_done, workload_config.output))
+    writer_proc = mp.Process(target=result_writer, args=(results, writer_exit, writer_done, workload_config.output, verbose))
     writer_proc.start()
     # Wait for the workers to finish
     done.wait()

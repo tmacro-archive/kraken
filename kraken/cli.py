@@ -34,4 +34,5 @@ def get_args():
     parser.add_argument('-k', '--key-prefix', action='store', default='object', help='Specify the prefix to use for keys during uploads.')
     parser.add_argument('-o', '--output', action='store', required=True, type=path, help='Specifiy the path to use for results data.')
     parser.add_argument('--cs', '--connection-string', action='store', dest='connect_str', default=None, help='Specify the Azure connction string for blob targets. If not provided it is read from the env var `AZURE_STORAGE_CONNECTION_STRING`')
+    parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Enable verbose logging')
     return parser.parse_args()

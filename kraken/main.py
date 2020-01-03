@@ -1,30 +1,13 @@
 from . import pool
 from .blob import BlobDriver, BlobDriverConfig
 from .cli import get_args
-from .driver import DriverConfig
+# from .driver import DriverConfig
 from .utils import for_duration
 import os
 from collections import namedtuple
 
 DriverConfig = namedtuple('DriverConfig', ['cls', 'config'])
 WorkloadConfig = namedtuple('WorkloadConfig', ['driver', 'action', 'output', 'duration', 'obj_size', 'bucket', 'key_prefix', 'key_start', 'key_step'], defaults=[None, None])
-
-def do_put(driver, config):
-    for result in for_duration(config.duration, driver.put, config.obj_size):
-        yield result
-    
-def do_get(driver, config):
-    driver.get()
-
-
-
-def build_driver_config(args):
-    if args.target == 'blob':
-        driver = BlobDriver
-        driver_conf = build_blob_driver_config(args)
-    if args.action == 'put':
-        action = do_put
-    return DriverConfig(driver, driver_conf, action, args.duration, args.size)
 
 def build_blob_driver_config(args):
     if args.connect_str:
@@ -55,4 +38,4 @@ def build_workload_config(args):
 def entry():
     args = get_args()
     workload_conf = build_workload_config(args)
-    pool.execute(workload_conf, args.procs)
+    pool.execute(workload_conf, args.procs, verbose=args.verbose)

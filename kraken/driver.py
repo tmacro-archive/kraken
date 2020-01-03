@@ -40,6 +40,10 @@ class FakeFile:
             self._pos = self._size - offset
         return self._pos
 
+    def write(self, data):
+        print(data)
+        pass
+
     def tell(self):
         return self._pos
 
@@ -77,7 +81,7 @@ class Driver:
         for key in self._get_key():
             if not timer():
                 break
-            yield instrument_call(self._put, self._bucket, key, FakeFile(self._object_size))
+            yield instrument_call(self._put, self._bucket, key, FakeFile(self._object_size))._replace(type='put', key=key, bucket=self._bucket)
 
     def _put(self, bucket, key, data):
         raise NotImplementedError('_put has not been implemented!')
@@ -87,7 +91,7 @@ class Driver:
         for key in self._get_key():
             if not timer():
                 break
-            yield instrument_call(self._get, self._bucket, key, output)
+            yield instrument_call(self._get, self._bucket, key, FakeFile(0))._replace(type='get', key=key, bucket=self._bucket)
 
     def _get(self, bucket, key, output):
         raise NotImplementedError('_get has not been implemented!')

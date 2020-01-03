@@ -12,16 +12,23 @@ def for_duration(duration, func, *args, **kwargs):
         yield func(*args, **kwargs)
 
 
-InstrumentedCall = namedtuple('InstrumentedCall', ['start', 'stop', 'result'])
+InstrumentedCall = namedtuple('InstrumentedCall', ['start', 'stop', 'result', 'type', 'key', 'bucket', 'error'], defaults=[None, None, None, None])
 
 def instrument_call(func, *args, **kwargs):
     started = datetime.now(timezone.utc)
+    error = None
     try:
         result = func(*args, **kwargs)
-    except Exception:
+    except Exception as e:
         result = False
+        error = str(e)
     stopped = datetime.now(timezone.utc)
-    return InstrumentedCall(started.isoformat(), stopped.isoformat(), not not result)
+    return InstrumentedCall(
+        start=started.isoformat(),
+        stop=stopped.isoformat(), 
+        result=not not result,
+        error=error
+    )
 
 class Timer:
     def __init__(self, duration):
