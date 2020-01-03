@@ -12,7 +12,9 @@ def for_duration(duration, func, *args, **kwargs):
         yield func(*args, **kwargs)
 
 
-InstrumentedCall = namedtuple('InstrumentedCall', ['start', 'stop', 'result', 'type', 'key', 'bucket', 'error'], defaults=[None, None, None, None])
+_InstrumentedCall = namedtuple('InstrumentedCall', ['start', 'stop', 'result', 'type', 'key', 'bucket', 'error'])
+def InstrumentedCall(start, stop, result, type=None, key=None, bucket=None, error=None):
+    return _InstrumentedCall(start, stop, result, type, key, bucket, error)
 
 def instrument_call(func, *args, **kwargs):
     started = datetime.now(timezone.utc)

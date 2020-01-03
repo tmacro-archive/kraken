@@ -7,8 +7,10 @@ import os
 from collections import namedtuple
 
 DriverConfig = namedtuple('DriverConfig', ['cls', 'config'])
-WorkloadConfig = namedtuple('WorkloadConfig', ['driver', 'action', 'output', 'duration', 'obj_size', 'bucket', 'key_prefix', 'key_start', 'key_step'], defaults=[None, None])
-
+_WorkloadConfig = namedtuple('WorkloadConfig', ['driver', 'action', 'output', 'duration', 'obj_size', 'bucket', 'key_prefix', 'key_start', 'key_step'])
+def WorkloadConfig(driver, action, output, duration, obj_size, bucket, key_prefix, key_start=None, key_step=None):
+    return _WorkloadConfig(driver, action, output, duration, obj_size, bucket, key_prefix, key_start, key_step)
+    
 def build_blob_driver_config(args):
     if args.connect_str:
         return BlobDriver, BlobDriverConfig(args.connect_str)
