@@ -3,10 +3,10 @@ from multiprocessing import Barrier, Process
 import datetime
 import threading
 import queue
-from .utils import for_duration
+from .utils import for_duration, InstrumentedCall
+
 import traceback
 import json
-
 def do_work(start, done, results, config):
     try:
         driver = config.driver.cls()
@@ -14,7 +14,7 @@ def do_work(start, done, results, config):
         start.wait()
         action = getattr(driver, config.action)
         for result in action():
-            results.put(result)
+            results.put(result._asdict())
         done.wait()
     except Exception as e:
         print('Exception in worker process')
@@ -36,7 +36,8 @@ def result_writer(results, exit, done, output_path, verbose):
         output.write('[\n')
         while not exit.is_set() or not results.empty():
             try:
-                result = results.get(timeout=5)
+                _result = results.get(timeout=5)
+                result = InstrumentedCall(**_result)
                 if verbose:
                     print('%s %s/%s\t\t%s'%(result.type.upper(), result.bucket, result.key, 'SUCCESS' if result.result else 'FAILED'))
                     if result.error:
