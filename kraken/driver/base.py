@@ -1,10 +1,7 @@
 import os
 from collections import namedtuple
 from datetime import datetime, timezone
-from .utils import instrument_call, Timer
-
-DriverConfig = namedtuple('DriverConfig', ['cls', 'config'])
-WorkloadConfig = namedtuple('WorkloadConfig', ['driver', 'action', 'duration', 'obj_size', 'bucket', 'key_prefix', 'key_start', 'key_step'])
+from ..utils import instrument_call, Timer
 
 class FakeFile:
     def __init__(self, size, content = b'0'):

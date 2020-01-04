@@ -34,5 +34,8 @@ def get_args():
     parser.add_argument('-k', '--key-prefix', action='store', default='object', help='Specify the prefix to use for keys during uploads.')
     parser.add_argument('-o', '--output', action='store', required=True, type=path, help='Specifiy the path to use for results data.')
     parser.add_argument('--cs', '--connection-string', action='store', dest='connect_str', default=None, help='Specify the Azure connction string for blob targets. If not provided it is read from the env var `AZURE_STORAGE_CONNECTION_STRING`')
+    parser.add_argument('--ak', '--access-key', action='store', dest='access_key', default=None, help='Specify the Access Key to use for s3 targets. If not provided it is read from the env var `ACCESS_KEY`')
+    parser.add_argument('--sk', '--secret-key', action='store', dest='secret_key', default=None, help='Specify the Secret Key to use for s3 targets. If not provided it is read from the env var `SECRET_KEY`')
+    parser.add_argument('--s3-endpoint', action='store', default=None, help='Specify the s3 endpoint to use. If not provided `s3.amazon.com` is used.')
     parser.add_argument('-v', '--verbose', action='store_true', default=False, help='Enable verbose logging')
     return parser.parse_args()
