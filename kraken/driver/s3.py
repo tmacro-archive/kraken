@@ -23,7 +23,7 @@ class S3Driver(Driver):
         s3_client.upload_fileobj(data)
         return True
     
-    def _get(self, container, key, output):
+    def _get(self, bucket, key, output):
         s3_client = self._client.Object(bucket, key)
         s3_client.download_fileobj(output)
         return True
