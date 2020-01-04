@@ -38,7 +38,6 @@ class FakeFile:
         return self._pos
 
     def write(self, data):
-        print(data)
         pass
 
     def tell(self):
