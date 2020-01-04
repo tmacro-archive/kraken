@@ -1,10 +1,10 @@
-from . import pool
-from .driver import BlobDriver, BlobDriverConfig, S3Driver, S3DriverConfig
-from .cli import get_args
-# from .driver import DriverConfig
-from .utils import for_duration
 import os
 from collections import namedtuple
+
+from . import pool
+from .cli import get_args
+from .driver import BlobDriver, BlobDriverConfig, S3Driver, S3DriverConfig
+from .utils import for_duration
 
 DriverConfig = namedtuple('DriverConfig', ['cls', 'config'])
 _WorkloadConfig = namedtuple('WorkloadConfig', ['driver', 'action', 'output', 'duration', 'obj_size', 'bucket', 'key_prefix', 'key_start', 'key_step'])
