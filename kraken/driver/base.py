@@ -1,7 +1,10 @@
 import os
+import uuid
 from collections import namedtuple
 from datetime import datetime, timezone
-from ..utils import instrument_call, Timer
+
+from ..utils import Timer, instrument_call
+
 
 class FakeFile:
     def __init__(self, size, content = b'0'):
@@ -62,7 +65,7 @@ class Driver:
 
     def setup(self, config):
         self._bucket = config.bucket
-        self._key_prefix = config.key_prefix
+        self._key_prefix = '%s-%s'%(config.key_prefix, uuid.uuid4().hex)
         self._key_start = config.key_start
         self._key_step = config.key_step
         self._object_size = config.obj_size
@@ -97,5 +100,3 @@ class Driver:
 
     def _delete(self, bucket, key):
         raise NotImplementedError('_delete has not been implemented!')
-
-
