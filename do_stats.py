@@ -125,7 +125,16 @@ def get_avg_ops_samples(samples):
     slice_averages = average_ops_slices(slices, 10)
     global_average = math.floor(sum(slice_averages.values()) / len(slice_averages.keys()))
     return global_average
+
+def get_success_percentage(samples):
+    num_samples = len(samples)
+    num_succeeded = len(list(filter(lambda s: s['result'], samples)))
+    return num_succeeded / num_samples
        
+def log_errors(samples):
+    for s in samples:
+        if s['error']:
+            print(s['error'])
 
 if __name__ == '__main__':
     for sample_path in sys.argv[1:]:
@@ -140,5 +149,13 @@ if __name__ == '__main__':
         write_ops = get_avg_ops_samples(write_samples)
         if read_ms or read_ops:
             print('READ:  %sms  %sops'%(read_ms, read_ops))
+            success_per = get_success_percentage(read_samples)
+            print('Success: %f%%'%success_per)
+            if success_per < 1:
+                log_errors(read_samples)
         if write_ms or write_ops:
             print('WRITE: %sms  %sops'%(write_ms, write_ops))
+            success_per = get_success_percentage(write_samples)
+            print('Success: %f%%'%success_per)
+            if success_per < 1:
+                log_errors(write_samples)
