@@ -8,11 +8,12 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import PosixPath
 from pprint import pprint
+import os.path
 
 from dateutil.parser import isoparse as fromisoformat
 
 def pathfile(opt):
-    return PosixPath(opt).resolve()
+    return PosixPath(os.expanduser(opt)).resolve()
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -41,11 +42,13 @@ def load_samples(path):
     with open(path) as samples:
         return json.load(samples)
 
+
 def hydrate_samples(samples):
     for sample in samples:
         sample['start'] = math.floor((fromisoformat(sample['start']) - datetime.min.replace(tzinfo=timezone.utc)) / timedelta(milliseconds=1))
         sample['stop'] = math.floor((fromisoformat(sample['stop']) - datetime.min.replace(tzinfo=timezone.utc)) / timedelta(milliseconds=1))
         sample['duration'] = sample['stop'] - sample['start']
+    return sorted(samples, key=lambda l: l['start'])
 
 
 @as_list
@@ -140,7 +143,7 @@ if __name__ == '__main__':
     for sample_path in sys.argv[1:]:
         print('~~ %s ~~'%sample_path)
         samples = load_samples(sample_path)
-        hydrate_samples(samples)
+        samples = list(hydrate_samples(samples))
         read_samples = get_reads(samples)
         write_samples = get_writes(samples)
         read_ms = get_avg_ms_samples(read_samples)
