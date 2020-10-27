@@ -3,7 +3,7 @@ azure-storage-blob==12.1.0
 certifi==2019.11.28
 cffi==1.13.2
 chardet==3.0.4
-cryptography==2.8
+cryptography==3.2
 idna==2.8
 isodate==0.6.0
 -e git+git@github.com:tmacro/kraken.git@db61a06f590b44b8d255d8543c4592b2a0961484#egg=kraken
